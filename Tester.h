@@ -31,6 +31,8 @@ class Tester
 
     void showPassed(const std::string& behavor);
     void showFailed(const std::string& behavor, const std::string& info);
+
+    int returnValue() const;
     ~Tester();
 };
 

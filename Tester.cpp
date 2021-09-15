@@ -130,3 +130,11 @@ std::string colorText(const std::string& text, textColor color)
 {
     return "\033[1;"+ std::to_string(int(color))+"m"+text+"\033[0m";
 }
+
+int Tester::returnValue() const
+{
+    if (numOfTestSuitsSuccess != numOfTestSuits) 
+        return EXIT_FAILURE;
+    else
+        return 0;
+}
