@@ -6,9 +6,11 @@ SOURCES:=$(shell find . -name  "*.cpp" )
 HEADERS:=$(shell find . -name  "*.h" )
 INC:=
 LIBS:=
-OUTPUT:=libTester
+INSTALL_DIR:=${HOME}/.local
+NAME:=Tester
+OUTPUT:=lib${NAME}
 
-all : ${OUTPUT}.a test
+all : ${OUTPUT}.a
 	./test
 
 ${OUTPUT}.a : ${SOURCES} ${HEADERS}
@@ -19,3 +21,12 @@ ${OUTPUT}.a : ${SOURCES} ${HEADERS}
 
 clear :
 	rm -f ${OUTPUT}.a *.o *.s
+
+install: ${OUTPUT}.a
+	cp ${OUTPUT}.a ${INSTALL_DIR}/lib/${OUTPUT}.a
+	mkdir -p ${INSTALL_DIR}/include/${NAME}
+	cp ${NAME}.h ${INSTALL_DIR}/include/${NAME}/${NAME}.h
+
+uninstall:
+	rm -f ${INSTALL_DIR}/lib/${OUTPUT}.a
+	rm -rf ${INSTALL_DIR}/include/${NAME}
