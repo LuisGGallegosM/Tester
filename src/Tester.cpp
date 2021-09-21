@@ -2,6 +2,10 @@
 #include "Tester.h"
 #include<iomanip>
 
+enum class textColor { red=31, green, orange, blue, purple,cyan };
+
+std::string colorText(const std::string& text, textColor color);
+
 Tester::Tester(const char* name) : suitName(name)
 {
     numOfTestSuits=0;

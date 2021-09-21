@@ -3,10 +3,6 @@
 
 #include<iostream>
 
-enum class textColor { red=31, green, orange, blue, purple,cyan };
-
-std::string colorText(const std::string& text, textColor color);
-
 class Tester
 {
     std::string suitName;
