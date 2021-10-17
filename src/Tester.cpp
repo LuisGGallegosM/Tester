@@ -2,6 +2,48 @@
 #include "Tester.h"
 #include<iomanip>
 
+struct MemoryMetrix
+{
+    uint64_t allocated;
+    int allocations;
+    int deallocations;
+
+    MemoryMetrix():
+    allocated(0), allocations(0), deallocations(0)
+    {
+
+    }
+
+    void reset()
+    {
+        allocated=0;
+        allocations=0;
+        deallocations=0;
+    }
+};
+
+MemoryMetrix memoryMetrix;
+
+void* operator new(std::size_t bytes)
+{
+    memoryMetrix.allocated+=bytes;
+    memoryMetrix.allocations++;
+    return malloc(bytes);
+}
+
+void* operator new  ( std::size_t bytes, std::size_t al )
+{
+    memoryMetrix.allocated+=bytes;
+    memoryMetrix.allocations++;
+    return malloc(bytes);
+}
+
+void operator delete(void* memo)
+{
+    memoryMetrix.deallocations++;
+    free(memo);
+}
+
 enum class textColor { red=31, green, orange, blue, purple,cyan };
 
 std::string colorText(const std::string& text, textColor color);
@@ -17,24 +59,36 @@ Tester::Tester(const char* name) : suitName(name)
     std::cout << "\tTesting: "<< name << "\n";
 }
 
-void Tester::test(void (*func)(Tester*), const char* testName)
+bool Tester::test(void (*func)(Tester*), const char* testName)
 {
+    bool valid=true;
     std::cout << "test suit : "<< testName << "\n";
     ++numOfTestSuits;
     try
     {
         numOfTestSuccess=0;
         numOfTest=0;
+        memoryMetrix.reset();
         func(this);
-        textColor c = (numOfTestSuccess==numOfTest) ? textColor::green : textColor::red;
+        MemoryMetrix metrix= memoryMetrix;
+        valid=(numOfTestSuccess==numOfTest);
+        textColor c = (valid) ? textColor::green : textColor::red;
         std::string str=std::to_string(numOfTestSuccess)+" / " + std::to_string(numOfTest);
         std::cout << "\tTests ran " <<  colorText(str,c) << " Passed\n" ;
+        std::cout << "\tMemory usage:\n";
+        std::cout << "\tallocated : " << metrix.allocated << " bytes in "
+            << metrix.allocations << " allocations.\n";
+        std::cout << "\tdeallocated : in " << metrix.deallocations << " deallocations.\n";
+        if ( metrix.allocations!= metrix.deallocations )
+            std::cout << "\t" << colorText("WARNING: allocations does not match! memory leakage!",textColor::red) << "\n";
         ++numOfTestSuitsSuccess;
     }
     catch(const std::exception& e)
     {
+        valid=false;
         std::cout << colorText(std::string("\tFAILED - exception: ")+e.what()+"\n",textColor::red);
     }
+    return valid;
 }
 
 void Tester::showPassed(const std::string& behavor)

@@ -21,10 +21,10 @@ build/${OUTPUT}.a : ${SOURCES} ${HEADERS}
 clear :
 	rm -f build/*
 
-install: build/${OUTPUT}.a
+install: build/${OUTPUT}.a uninstall
 	cp build/${OUTPUT}.a ${INSTALL_DIR}/lib/${OUTPUT}.a
 	mkdir -p ${INSTALL_DIR}/include/${NAME}
-	cp ${NAME}.h ${INSTALL_DIR}/include/${NAME}/${NAME}.h
+	cp src/${NAME}.h ${INSTALL_DIR}/include/${NAME}/${NAME}.h
 
 uninstall:
 	rm -f ${INSTALL_DIR}/lib/${OUTPUT}.a
